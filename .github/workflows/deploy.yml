@@ -25,6 +25,7 @@ jobs:
       - run: npm ci
       - run: npx ng test --watch=false
       - run: npx ng build --base-href /${{ github.event.repository.name }}/
+      - run: node scripts/copy-licenses.mjs
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:

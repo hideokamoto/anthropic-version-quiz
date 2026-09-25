@@ -14,7 +14,7 @@ import { LinkList } from '../shared/link-list';
     <h2>Anthropic数列とは</h2>
     <p>
       Claude のバージョン番号を 3, 3.5, 3.5v2, 3.7, 4, 4.1, 4.5, 4.6, 4.7, 4.8, 5, 5.1, 5.5
-      と並べた「数列」です。 各項に当たるモデルは次のとおりです。
+      と並べた「数列」で、各項に当たるモデルは次のとおりです。
     </p>
     <div class="table-wrap">
       <table>
@@ -55,12 +55,16 @@ import { LinkList } from '../shared/link-list';
         アイディア元：<a [href]="credit.watany.url" target="_blank" rel="noopener noreferrer">{{
           credit.watany.label
         }}</a>
-        さんが X に投稿した「Anthropic数列」
+        さんの
+        <a [href]="credit.watanyPost.url" target="_blank" rel="noopener noreferrer">{{
+          credit.watanyPost.label
+        }}</a>
       </li>
       <li>
         ソースコード：<a [href]="credit.repo.url" target="_blank" rel="noopener noreferrer">{{
           credit.repo.label
         }}</a>
+        （ライセンスは<a routerLink="/licenses">ライセンスページ</a>を参照）
       </li>
     </ul>
     <p class="note">

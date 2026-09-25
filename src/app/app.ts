@@ -7,7 +7,10 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   template: `
     <header class="site-header">
       <a routerLink="/" class="brand">Anthropic数列クイズ</a>
-      <a routerLink="/about">クレジット</a>
+      <nav>
+        <a routerLink="/about">クレジット</a>
+        <a routerLink="/licenses">ライセンス</a>
+      </nav>
     </header>
     <main>
       <router-outlet />

@@ -133,9 +133,24 @@ export const DOC_LINKS = {
 } satisfies Record<string, Link>;
 
 export const CREDIT_LINKS = {
-  watany: { label: '@_watany（X）', url: 'https://x.com/_watany' },
+  watany: { label: '@_watany（X アカウント）', url: 'https://x.com/_watany' },
+  watanyPost: {
+    label: '「Anthropic数列」の投稿',
+    url: 'https://x.com/_watany/status/2102653393500299316',
+  },
   repo: {
     label: 'GitHub リポジトリ',
     url: 'https://github.com/hideokamoto/anthropic-version-quiz',
+  },
+} satisfies Record<string, Link>;
+
+export const LICENSE_LINKS = {
+  appLicense: {
+    label: 'LICENSE（GitHub）',
+    url: 'https://github.com/hideokamoto/anthropic-version-quiz/blob/main/LICENSE',
+  },
+  gpl3: {
+    label: 'GNU General Public License v3.0（gnu.org）',
+    url: 'https://www.gnu.org/licenses/gpl-3.0.html',
   },
 } satisfies Record<string, Link>;

@@ -16,7 +16,7 @@ export interface Question {
 }
 
 /** Date the facts below were checked against the linked pages. */
-export const VERIFIED_AT = '2026-09-25';
+export const VERIFIED_AT = '2026-09-29';
 
 const UI: Question[] = [
   {
@@ -96,7 +96,7 @@ const UI: Question[] = [
     correct: 'Opus 5.5',
     wrong: ['Fable 5.5', 'Sonnet 5.5', 'Mythos 5.5'],
     explanation:
-      '2026年9月22日のリリースノートに "the first model in our new Claude 5.5 family" と書かれています。',
+      '2026年9月22日のリリースノートに "the first model in our new Claude 5.5 family" と書かれています。Sonnet 5.5 はその6日後の9月28日に公開されました。',
     docs: [mp('opus-5-5'), N.opus55],
     sources: [D.claudeAiReleaseNotes],
   },
@@ -274,10 +274,21 @@ const UI: Question[] = [
     mode: 'ui',
     question: '現行ラインナップで、コンテキストウィンドウが 1M トークンではないモデルは？',
     correct: 'Haiku 4.5',
-    wrong: ['Sonnet 5', 'Opus 5.5', 'Fable 5.1'],
+    wrong: ['Sonnet 5.5', 'Opus 5.5', 'Fable 5.1'],
     explanation: 'Haiku 4.5 だけ 200K トークンです。',
     docs: [mp('haiku-4-5'), D.contextWindows],
     sources: [D.overview],
+  },
+  {
+    id: 'U26',
+    mode: 'ui',
+    question: '「Claude 5.5 ファミリー」の2番目のモデルは？',
+    correct: 'Sonnet 5.5',
+    wrong: ['Fable 5.5', 'Haiku 5.5', 'Mythos 5.5'],
+    explanation:
+      'Opus 5.5 が2026年9月22日、Sonnet 5.5 が9月28日です。Sonnet 5.5 の料金は Sonnet 5 と同じ、100万トークンあたり入力 $2／出力 $10 です。',
+    docs: [mp('sonnet-5-5'), N.sonnet55, D.whatsNewSonnet55],
+    sources: [D.releaseNotes, mp('sonnet-5-5')],
   },
 ];
 
@@ -350,7 +361,7 @@ const API: Question[] = [
     mode: 'api',
     question: '現行ラインナップ4モデルのうち、モデル ID に日付が入っているのは？',
     correct: 'Haiku 4.5',
-    wrong: ['Sonnet 5', 'Opus 5.5', 'Fable 5.1'],
+    wrong: ['Sonnet 5.5', 'Opus 5.5', 'Fable 5.1'],
     explanation: 'Haiku 4.5 の ID は claude-haiku-4-5-20251001 です。',
     docs: [mp('haiku-4-5')],
     sources: [D.overview],
@@ -482,7 +493,7 @@ const API: Question[] = [
     mode: 'api',
     question: 'API の effort の既定値が medium のモデルは？',
     correct: 'Opus 5.5',
-    wrong: ['Fable 5.1', 'Sonnet 5', 'Opus 5'],
+    wrong: ['Fable 5.1', 'Sonnet 5.5', 'Opus 5'],
     explanation: 'ほかの3つの既定値は high です。',
     docs: [mp('opus-5-5'), D.effort],
     sources: [D.overview, mp('opus-5')],
@@ -502,7 +513,7 @@ const API: Question[] = [
     mode: 'api',
     question: '現行ラインナップで、最大出力（同期 API）が 64K トークンのモデルは？',
     correct: 'Haiku 4.5',
-    wrong: ['Sonnet 5', 'Opus 5.5', 'Fable 5.1'],
+    wrong: ['Sonnet 5.5', 'Opus 5.5', 'Fable 5.1'],
     explanation: 'ほかの3つは 128K トークンです。',
     docs: [mp('haiku-4-5')],
     sources: [D.overview],
@@ -536,6 +547,17 @@ const API: Question[] = [
     explanation: 'Opus 4.1 は2026年8月5日に廃止されました。ほかの3つはまだ使えます。',
     docs: [N.opus41],
     sources: [D.deprecations],
+  },
+  {
+    id: 'A26',
+    mode: 'api',
+    question: 'Sonnet 5.5 に thinking: {type: "disabled"} を送ると？',
+    correct: '400 エラー',
+    wrong: ['そのまま動く', 'adaptive に変換される', '無視される'],
+    explanation:
+      'Sonnet 5.5 では拒否されます。up-front thinking をオフにするには thinking: {type: "between_tools"} を使います（effort が high 以下のときだけ）。',
+    docs: [mp('sonnet-5-5'), D.whatsNewSonnet55, D.thinking],
+    sources: [mp('sonnet-5-5')],
   },
 ];
 

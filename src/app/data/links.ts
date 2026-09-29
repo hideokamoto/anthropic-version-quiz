@@ -7,7 +7,7 @@ const DOCS = 'https://platform.claude.com/docs/en';
 const NEWS = 'https://www.anthropic.com/news';
 const SUPPORT = 'https://support.claude.com/en/articles';
 
-/** Model pages confirmed to exist on platform.claude.com (2026-09-25). */
+/** Model pages confirmed to exist on platform.claude.com (2026-09-29). */
 type ModelSlug =
   | 'fable-5-1'
   | 'mythos-5-1'
@@ -18,6 +18,7 @@ type ModelSlug =
   | 'opus-4-7'
   | 'opus-4-6'
   | 'opus-4-5'
+  | 'sonnet-5-5'
   | 'sonnet-5'
   | 'sonnet-4-6'
   | 'sonnet-4-5'
@@ -33,6 +34,7 @@ const MODEL_NAMES: Record<ModelSlug, string> = {
   'opus-4-7': 'Claude Opus 4.7',
   'opus-4-6': 'Claude Opus 4.6',
   'opus-4-5': 'Claude Opus 4.5',
+  'sonnet-5-5': 'Claude Sonnet 5.5',
   'sonnet-5': 'Claude Sonnet 5',
   'sonnet-4-6': 'Claude Sonnet 4.6',
   'sonnet-4-5': 'Claude Sonnet 4.5',
@@ -67,6 +69,10 @@ export const NEWS_LINKS = {
   fable5: { label: 'Claude Fable 5 and Claude Mythos 5', url: `${NEWS}/claude-fable-5-mythos-5` },
   fable5Redeploy: { label: 'Redeploying Claude Fable 5', url: `${NEWS}/redeploying-fable-5` },
   sonnet5: { label: 'Introducing Claude Sonnet 5', url: `${NEWS}/claude-sonnet-5` },
+  sonnet55: {
+    label: 'Introducing Claude Sonnet 5.5',
+    url: 'https://www.anthropic.com/claude-sonnet-5-5',
+  },
   opus5: { label: 'Claude Opus 5', url: `${NEWS}/claude-opus-5` },
   fable51: {
     label: 'Claude Fable 5.1 and Mythos 5.1',
@@ -108,6 +114,10 @@ export const DOC_LINKS = {
   whatsNewOpus55: {
     label: "What's new in Claude Opus 5.5",
     url: `${DOCS}/models/opus-5-5/whats-new-opus-5-5`,
+  },
+  whatsNewSonnet55: {
+    label: "What's new in Claude Sonnet 5.5",
+    url: `${DOCS}/models/sonnet-5-5/whats-new-sonnet-5-5`,
   },
   bedrock: {
     label: 'Claude in Amazon Bedrock',

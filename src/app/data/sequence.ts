@@ -46,5 +46,10 @@ export const SEQUENCE: readonly SequenceTerm[] = [
     date: '2026年9月',
     links: [mp('fable-5-1'), mp('mythos-5-1')],
   },
-  { term: '5.5', models: 'Claude Opus 5.5', date: '2026年9月', links: [mp('opus-5-5')] },
+  {
+    term: '5.5',
+    models: 'Claude Opus 5.5 / Sonnet 5.5',
+    date: '2026年9月',
+    links: [mp('opus-5-5'), mp('sonnet-5-5')],
+  },
 ];

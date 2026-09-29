@@ -12,7 +12,7 @@
 - アイディア元：[@_watany](https://x.com/_watany) さんの[「Anthropic数列」の投稿](https://x.com/_watany/status/2102653393500299316)
 - 問題の事実確認に使った資料：[Models overview](https://platform.claude.com/docs/en/about-claude/models/overview)、[Model deprecations](https://platform.claude.com/docs/en/about-claude/model-deprecations)、[Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview)、[Claude ヘルプセンター](https://support.claude.com/en/articles/12138966-release-notes)、anthropic.com の各発表記事（アプリ内の「クレジット」ページに一覧があります）
 
-Anthropic とは関係のないファンメイドです。正解は 2026-09-25 時点の公式ドキュメントで確認したものです。
+Anthropic とは関係のないファンメイドです。正解は 2026-09-29 時点の公式ドキュメントで確認したものです。
 
 ## ライセンス
 

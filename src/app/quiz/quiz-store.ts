@@ -1,10 +1,11 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { QuizMode, questionsFor } from '../data/questions';
+import { Text } from '../i18n/i18n';
 import { countCorrect, pickQuestions, PlayableQuestion } from './game';
 
-export const MODE_LABELS: Record<QuizMode, string> = {
-  ui: 'claude.ai モード',
-  api: 'API モード',
+export const MODE_LABELS: Record<QuizMode, Text> = {
+  ui: { ja: 'claude.ai モード', en: 'claude.ai mode' },
+  api: { ja: 'API モード', en: 'API mode' },
 };
 
 const BEST_KEY = (mode: QuizMode) => `anthropic-version-quiz:best:${mode}`;

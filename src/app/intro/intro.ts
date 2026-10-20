@@ -1,30 +1,63 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { I18n, Text } from '../i18n/i18n';
 import { QUESTIONS_PER_GAME } from '../quiz/game';
 
 interface Faq {
-  q: string;
-  a: string;
+  q: Text;
+  a: Text;
 }
+
+interface Step {
+  title: Text;
+  body: Text;
+}
+
+const M = {
+  eyebrow: { ja: 'このクイズについて', en: 'About this quiz' },
+  play: { ja: 'クイズで遊ぶ', en: 'Play the quiz' },
+  video: {
+    ja: 'プレイ動画。4択に答え、公式ドキュメントのリンクで答え合わせをして、称号つきの結果を出す',
+    en: 'Gameplay video (Japanese UI): answering four-choice questions, checking them against official doc links, and getting a result with a title',
+  },
+  how: { ja: '遊び方', en: 'How to play' },
+  faq: { ja: 'よくある質問', en: 'FAQ' },
+  more: {
+    ja: '数列の中身・クレジット・参考資料',
+    en: 'The sequence, credits and references',
+  },
+} as const;
 
 @Component({
   selector: 'app-intro',
   imports: [RouterLink],
   template: `
     <section class="lead">
-      <p class="eyebrow">このクイズについて</p>
-      <h2>Claude のバージョン番号、<br />どこまで追えてる？</h2>
-      <!-- 日本語の文中で改行すると空白として描画されるので、1文ずつ要素を分けて改行する -->
-      <p>
-        <span>Claude のバージョン番号はまっすぐ進みません。</span
-        ><span>その「Anthropic数列」を題材に、公式ドキュメントで確かめた事実だけで作った</span
-        ><span>{{ perGame }}問の4択クイズです。</span
-        ><span>登録なし・ブラウザだけで遊べます。</span>
-      </p>
-      <button type="button" class="primary play" (click)="play.emit()">クイズで遊ぶ</button>
+      <p class="eyebrow">{{ i18n.t(m.eyebrow) }}</p>
+      @if (i18n.lang() === 'ja') {
+        <h2>Claude のバージョン番号、<br />どこまで追えてる？</h2>
+        <!-- 日本語の文中で改行すると空白として描画されるので、1文ずつ要素を分けて改行する -->
+        <p>
+          <span>Claude のバージョン番号はまっすぐ進みません。</span
+          ><span>その「Anthropic数列」を題材に、公式ドキュメントで確かめた事実だけで作った</span
+          ><span>{{ perGame }}問の4択クイズです。</span
+          ><span>登録なし・ブラウザだけで遊べます。</span>
+        </p>
+      } @else {
+        <h2>How well do you know<br />Claude's version numbers?</h2>
+        <p>
+          Claude's version numbers don't go up in a straight line. This is a
+          {{ perGame }}-question multiple-choice quiz about that “Anthropic Sequence”, built only
+          from facts checked against the official docs. No sign-up — it runs in your browser.
+        </p>
+      }
+      <button type="button" class="primary play" (click)="play.emit()">
+        {{ i18n.t(m.play) }}
+      </button>
     </section>
 
     <figure class="movie">
+      <!-- 動画は日本語版の画面を撮ったもの -->
       <video
         src="lp/promo.mp4"
         poster="lp/promo-poster.webp"
@@ -33,34 +66,36 @@ interface Faq {
         playsinline
         controls
         preload="none"
-        aria-label="プレイ動画。4択に答え、公式ドキュメントのリンクで答え合わせをして、称号つきの結果を出す"
+        [attr.aria-label]="i18n.t(m.video)"
       ></video>
     </figure>
 
     <section class="how">
-      <h3>遊び方</h3>
+      <h3>{{ i18n.t(m.how) }}</h3>
       <ol class="steps">
-        <li><b>モードを選ぶ</b>claude.ai モードと API モードの2種類</li>
-        <li><b>4択に答える</b>1プレイ {{ perGame }} 問。出題は毎回ランダム</li>
-        <li><b>根拠を確かめる</b>答えるたびに、公式ドキュメントと根拠のページへのリンクが出る</li>
-        <li><b>称号をシェア</b>正解数に応じた称号つきで X に投稿できる</li>
+        @for (step of steps; track $index) {
+          <li>
+            <b>{{ i18n.t(step.title) }}</b
+            >{{ i18n.t(step.body) }}
+          </li>
+        }
       </ol>
     </section>
 
     <section class="faq-sec">
-      <h3>よくある質問</h3>
+      <h3>{{ i18n.t(m.faq) }}</h3>
       <div class="faq">
-        @for (f of faqs; track f.q) {
+        @for (f of faqs; track $index) {
           <details>
-            <summary>{{ f.q }}</summary>
-            <p>{{ f.a }}</p>
+            <summary>{{ i18n.t(f.q) }}</summary>
+            <p>{{ i18n.t(f.a) }}</p>
           </details>
         }
       </div>
     </section>
 
     <p class="links">
-      <a routerLink="/about">数列の中身・クレジット・参考資料</a>
+      <a routerLink="/about">{{ i18n.t(m.more) }}</a>
     </p>
   `,
   styles: `
@@ -167,16 +202,57 @@ export class Intro {
   /** SP でクイズのタブへ戻るための通知 */
   readonly play = output<void>();
 
+  protected readonly i18n = inject(I18n);
+  protected readonly m = M;
   protected readonly perGame = QUESTIONS_PER_GAME;
-  protected readonly faqs: Faq[] = [
-    { q: '無料ですか？', a: '無料です。登録やインストールも要りません。' },
+  protected readonly steps: Step[] = [
     {
-      q: '正解は何を根拠にしていますか？',
-      a: 'Anthropic の公式ドキュメント・リリースノート・発表記事です。解答後に根拠のページへのリンクを出しています。',
+      title: { ja: 'モードを選ぶ', en: 'Pick a mode' },
+      body: { ja: 'claude.ai モードと API モードの2種類', en: 'claude.ai mode or API mode' },
     },
     {
-      q: 'Anthropic の公式クイズですか？',
-      a: 'いいえ。Anthropic とは関係のない、非公式のファンメイドです。',
+      title: { ja: '4択に答える', en: 'Answer four-choice questions' },
+      body: {
+        ja: `1プレイ ${QUESTIONS_PER_GAME} 問。出題は毎回ランダム`,
+        en: `${QUESTIONS_PER_GAME} questions per game, picked at random each time`,
+      },
+    },
+    {
+      title: { ja: '根拠を確かめる', en: 'Check the evidence' },
+      body: {
+        ja: '答えるたびに、公式ドキュメントと根拠のページへのリンクが出る',
+        en: 'After each answer you get links to the official docs and the pages behind the answer',
+      },
+    },
+    {
+      title: { ja: '称号をシェア', en: 'Share your title' },
+      body: {
+        ja: '正解数に応じた称号つきで X に投稿できる',
+        en: 'Post your score on X with a title based on how many you got right',
+      },
+    },
+  ];
+  protected readonly faqs: Faq[] = [
+    {
+      q: { ja: '無料ですか？', en: 'Is it free?' },
+      a: {
+        ja: '無料です。登録やインストールも要りません。',
+        en: 'Yes. No sign-up or install needed.',
+      },
+    },
+    {
+      q: { ja: '正解は何を根拠にしていますか？', en: 'Where do the answers come from?' },
+      a: {
+        ja: 'Anthropic の公式ドキュメント・リリースノート・発表記事です。解答後に根拠のページへのリンクを出しています。',
+        en: "Anthropic's official docs, release notes and announcements. After each answer, the quiz links to the pages it is based on.",
+      },
+    },
+    {
+      q: { ja: 'Anthropic の公式クイズですか？', en: 'Is this an official Anthropic quiz?' },
+      a: {
+        ja: 'いいえ。Anthropic とは関係のない、非公式のファンメイドです。',
+        en: 'No. It is an unofficial fan-made quiz, not affiliated with Anthropic.',
+      },
     },
   ];
 }

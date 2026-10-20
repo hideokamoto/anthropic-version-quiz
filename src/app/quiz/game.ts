@@ -1,10 +1,11 @@
 import { Question } from '../data/questions';
+import { Text } from '../i18n/i18n';
 
 export const QUESTIONS_PER_GAME = 5;
 
 export interface PlayableQuestion {
   source: Question;
-  choices: string[];
+  choices: Text[];
   answerIndex: number;
 }
 
@@ -41,12 +42,12 @@ export function countCorrect(
   return questions.filter((q, i) => answers[i] === q.answerIndex).length;
 }
 
-export function rankFor(score: number, total: number): string {
+export function rankFor(score: number, total: number): Text {
   const ratio = total === 0 ? 0 : score / total;
-  if (ratio === 1) return 'Anthropic数列の番人';
-  if (ratio >= 0.8) return 'リリースノート常駐者';
-  if (ratio >= 0.6) return 'モデル選択メニューの常連';
-  if (ratio >= 0.4) return '小数点に翻弄される人';
-  if (ratio > 0) return '次は6だと信じている人';
-  return 'Claude 3 で時が止まっている人';
+  if (ratio === 1) return { ja: 'Anthropic数列の番人', en: 'Keeper of the Anthropic Sequence' };
+  if (ratio >= 0.8) return { ja: 'リリースノート常駐者', en: 'Lives in the release notes' };
+  if (ratio >= 0.6) return { ja: 'モデル選択メニューの常連', en: 'Model picker regular' };
+  if (ratio >= 0.4) return { ja: '小数点に翻弄される人', en: 'Lost in the decimal points' };
+  if (ratio > 0) return { ja: '次は6だと信じている人', en: 'Sure the next one is 6' };
+  return { ja: 'Claude 3 で時が止まっている人', en: 'Still stuck at Claude 3' };
 }

@@ -1,5 +1,7 @@
+import { Text } from '../i18n/i18n';
+
 export interface Link {
-  label: string;
+  label: Text;
   url: string;
 }
 
@@ -42,13 +44,20 @@ const MODEL_NAMES: Record<ModelSlug, string> = {
 };
 
 export function modelPage(slug: ModelSlug): Link {
-  return { label: `${MODEL_NAMES[slug]} モデルページ`, url: `${DOCS}/models/${slug}/overview` };
+  const name = MODEL_NAMES[slug];
+  return {
+    label: { ja: `${name} モデルページ`, en: `${name} model page` },
+    url: `${DOCS}/models/${slug}/overview`,
+  };
 }
 
 /** Announcement posts on anthropic.com. */
 export const NEWS_LINKS = {
   claude3: {
-    label: 'Introducing the next generation of Claude（Claude 3 発表）',
+    label: {
+      ja: 'Introducing the next generation of Claude（Claude 3 発表）',
+      en: 'Introducing the next generation of Claude (Claude 3 announcement)',
+    },
     url: `${NEWS}/claude-3-family`,
   },
   sonnet35: { label: 'Introducing Claude 3.5 Sonnet', url: `${NEWS}/claude-3-5-sonnet` },
@@ -93,10 +102,16 @@ export const DOC_LINKS = {
     label: 'Model IDs and versioning',
     url: `${DOCS}/about-claude/models/model-ids-and-versions`,
   },
-  releaseNotes: { label: 'Claude Platform リリースノート', url: `${DOCS}/release-notes/overview` },
+  releaseNotes: {
+    label: { ja: 'Claude Platform リリースノート', en: 'Claude Platform release notes' },
+    url: `${DOCS}/release-notes/overview`,
+  },
   pricing: { label: 'Pricing', url: `${DOCS}/about-claude/pricing` },
   fable5Intro: {
-    label: 'Introducing Claude Fable 5 and Claude Mythos 5（ドキュメント）',
+    label: {
+      ja: 'Introducing Claude Fable 5 and Claude Mythos 5（ドキュメント）',
+      en: 'Introducing Claude Fable 5 and Claude Mythos 5 (docs)',
+    },
     url: `${DOCS}/models/fable-5/introducing-claude-fable-5-and-claude-mythos-5`,
   },
   whatsNew46: {
@@ -133,34 +148,43 @@ export const DOC_LINKS = {
   promptCaching: { label: 'Prompt caching', url: `${DOCS}/build-with-claude/prompt-caching` },
   contextWindows: { label: 'Context windows', url: `${DOCS}/build-with-claude/context-windows` },
   claudeAiReleaseNotes: {
-    label: 'Claude ヘルプセンター：Release notes',
+    label: { ja: 'Claude ヘルプセンター：Release notes', en: 'Claude Help Center: Release notes' },
     url: `${SUPPORT}/12138966-release-notes`,
   },
   claudeAiModelSettings: {
-    label: 'Claude ヘルプセンター：Change the model, effort, and thinking settings',
+    label: {
+      ja: 'Claude ヘルプセンター：Change the model, effort, and thinking settings',
+      en: 'Claude Help Center: Change the model, effort, and thinking settings',
+    },
     url: `${SUPPORT}/8664678-change-the-model-effort-and-thinking-settings`,
   },
 } satisfies Record<string, Link>;
 
 export const CREDIT_LINKS = {
-  watany: { label: '@_watany（X アカウント）', url: 'https://x.com/_watany' },
+  watany: {
+    label: { ja: '@_watany（X アカウント）', en: '@_watany (X account)' },
+    url: 'https://x.com/_watany',
+  },
   watanyPost: {
-    label: '「Anthropic数列」の投稿',
+    label: { ja: '「Anthropic数列」の投稿', en: 'the original “Anthropic sequence” post' },
     url: 'https://x.com/_watany/status/2102653393500299316',
   },
   repo: {
-    label: 'GitHub リポジトリ',
+    label: { ja: 'GitHub リポジトリ', en: 'GitHub repository' },
     url: 'https://github.com/hideokamoto/anthropic-version-quiz',
   },
 } satisfies Record<string, Link>;
 
 export const LICENSE_LINKS = {
   appLicense: {
-    label: 'LICENSE（GitHub）',
+    label: { ja: 'LICENSE（GitHub）', en: 'LICENSE (GitHub)' },
     url: 'https://github.com/hideokamoto/anthropic-version-quiz/blob/main/LICENSE',
   },
   gpl3: {
-    label: 'GNU General Public License v3.0（gnu.org）',
+    label: {
+      ja: 'GNU General Public License v3.0（gnu.org）',
+      en: 'GNU General Public License v3.0 (gnu.org)',
+    },
     url: 'https://www.gnu.org/licenses/gpl-3.0.html',
   },
 } satisfies Record<string, Link>;

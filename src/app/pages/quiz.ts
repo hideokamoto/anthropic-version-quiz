@@ -1,7 +1,17 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { I18n, Text } from '../i18n/i18n';
 import { MODE_LABELS, QuizStore } from '../quiz/quiz-store';
 import { LinkList } from '../shared/link-list';
+
+const M = {
+  choices: { ja: '選択肢', en: 'Choices' },
+  correct: { ja: '正解！', en: 'Correct!' },
+  docs: { ja: 'このバージョンの公式ドキュメント', en: 'Official docs for this version' },
+  sources: { ja: '答えの根拠', en: 'Where the answer comes from' },
+  result: { ja: '結果を見る', en: 'See results' },
+  next: { ja: '次の問題へ', en: 'Next question' },
+} as const;
 
 @Component({
   selector: 'app-quiz',
@@ -9,12 +19,13 @@ import { LinkList } from '../shared/link-list';
   template: `
     @if (store.current(); as q) {
       <p class="progress">
-        {{ labels[store.mode()!] }} ・ {{ store.index() + 1 }} / {{ store.questions().length }}
+        {{ i18n.t(labels[store.mode()!]) }} ・ {{ store.index() + 1 }} /
+        {{ store.questions().length }}
       </p>
-      <h2>{{ q.source.question }}</h2>
+      <h2>{{ i18n.t(q.source.question) }}</h2>
 
-      <div class="choices" role="group" aria-label="選択肢">
-        @for (choice of q.choices; track choice; let i = $index) {
+      <div class="choices" role="group" [attr.aria-label]="i18n.t(m.choices)">
+        @for (choice of q.choices; track $index; let i = $index) {
           <button
             type="button"
             class="choice"
@@ -24,7 +35,7 @@ import { LinkList } from '../shared/link-list';
             (click)="store.answer(i)"
           >
             <span class="letter">{{ letters[i] }}</span>
-            <span>{{ choice }}</span>
+            <span>{{ i18n.t(choice) }}</span>
           </button>
         }
       </div>
@@ -32,13 +43,13 @@ import { LinkList } from '../shared/link-list';
       @if (answered()) {
         <section class="feedback" aria-live="polite">
           <p class="verdict" [class.ok]="isCorrect()">
-            {{ isCorrect() ? '正解！' : '不正解… 正解は「' + q.choices[q.answerIndex] + '」' }}
+            {{ isCorrect() ? i18n.t(m.correct) : wrongVerdict(q.choices[q.answerIndex]) }}
           </p>
-          <p>{{ q.source.explanation }}</p>
-          <app-link-list heading="このバージョンの公式ドキュメント" [links]="q.source.docs" />
-          <app-link-list heading="答えの根拠" [links]="q.source.sources" />
+          <p>{{ i18n.t(q.source.explanation) }}</p>
+          <app-link-list [heading]="i18n.t(m.docs)" [links]="q.source.docs" />
+          <app-link-list [heading]="i18n.t(m.sources)" [links]="q.source.sources" />
           <button type="button" class="primary" (click)="next()">
-            {{ isLast() ? '結果を見る' : '次の問題へ' }}
+            {{ i18n.t(isLast() ? m.result : m.next) }}
           </button>
         </section>
       }
@@ -115,9 +126,11 @@ import { LinkList } from '../shared/link-list';
   `,
 })
 export class QuizPage implements OnInit {
+  protected readonly i18n = inject(I18n);
   protected readonly store = inject(QuizStore);
   private readonly router = inject(Router);
 
+  protected readonly m = M;
   protected readonly labels = MODE_LABELS;
   protected readonly letters = ['A', 'B', 'C', 'D'];
 
@@ -131,6 +144,11 @@ export class QuizPage implements OnInit {
 
   protected isCorrect(): boolean {
     return this.store.currentAnswer() === this.store.current()?.answerIndex;
+  }
+
+  protected wrongVerdict(answer: Text): string {
+    const a = this.i18n.t(answer);
+    return this.i18n.lang() === 'ja' ? `不正解… 正解は「${a}」` : `Wrong… The answer is: ${a}`;
   }
 
   protected isLast(): boolean {

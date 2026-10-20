@@ -1,5 +1,6 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Link } from '../data/links';
+import { I18n } from '../i18n/i18n';
 
 @Component({
   selector: 'app-link-list',
@@ -10,7 +11,9 @@ import { Link } from '../data/links';
         <ul>
           @for (link of links(); track link.url) {
             <li>
-              <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+              <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{
+                i18n.t(link.label)
+              }}</a>
             </li>
           }
         </ul>
@@ -36,6 +39,7 @@ import { Link } from '../data/links';
   `,
 })
 export class LinkList {
+  protected readonly i18n = inject(I18n);
   readonly heading = input.required<string>();
   readonly links = input.required<readonly Link[]>();
 }

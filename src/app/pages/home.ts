@@ -1,22 +1,30 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { QuizMode } from '../data/questions';
+import { I18n, Text } from '../i18n/i18n';
 import { SEQUENCE } from '../data/sequence';
 import { QUESTIONS_PER_GAME } from '../quiz/game';
 import { MODE_LABELS, QuizStore } from '../quiz/quiz-store';
 
 interface ModeCard {
   mode: QuizMode;
-  description: string;
+  description: Text;
 }
+
+const M = {
+  eyebrow: { ja: 'Anthropic数列カルトクイズ', en: 'Anthropic Sequence trivia' },
+  heading: { ja: '次の項は、いくつ？', en: 'What comes next?' },
+  sequence: { ja: 'Anthropic数列', en: 'The Anthropic Sequence' },
+  best: { ja: '自己ベスト', en: 'Best' },
+} as const;
 
 @Component({
   selector: 'app-home',
   template: `
     <section class="hero">
-      <p class="eyebrow">Anthropic数列カルトクイズ</p>
-      <h1>次の項は、いくつ？</h1>
-      <ol class="sequence" aria-label="Anthropic数列">
+      <p class="eyebrow">{{ i18n.t(m.eyebrow) }}</p>
+      <h1>{{ i18n.t(m.heading) }}</h1>
+      <ol class="sequence" [attr.aria-label]="i18n.t(m.sequence)">
         @for (item of sequence; track item.term; let i = $index) {
           <li [style.animation-delay.ms]="i * 90">{{ item.term }}</li>
         }
@@ -27,11 +35,11 @@ interface ModeCard {
     <section class="modes">
       @for (card of cards; track card.mode) {
         <button type="button" class="mode" (click)="start(card.mode)">
-          <span class="mode-name">{{ labels[card.mode] }}</span>
-          <span class="mode-desc">{{ card.description }}</span>
+          <span class="mode-name">{{ i18n.t(labels[card.mode]) }}</span>
+          <span class="mode-desc">{{ i18n.t(card.description) }}</span>
           @let b = best(card.mode);
           @if (b !== null) {
-            <span class="best">自己ベスト {{ b }} / {{ perGame }}</span>
+            <span class="best">{{ i18n.t(m.best) }} {{ b }} / {{ perGame }}</span>
           }
         </button>
       }
@@ -130,15 +138,29 @@ interface ModeCard {
   `,
 })
 export class HomePage {
+  protected readonly i18n = inject(I18n);
   private readonly store = inject(QuizStore);
   private readonly router = inject(Router);
 
+  protected readonly m = M;
   protected readonly sequence = SEQUENCE;
   protected readonly labels = MODE_LABELS;
   protected readonly perGame = QUESTIONS_PER_GAME;
   protected readonly cards: ModeCard[] = [
-    { mode: 'ui', description: 'モデルの表示名・公開順・claude.ai での挙動' },
-    { mode: 'api', description: 'モデル ID・命名規則・Bedrock / Google Cloud の ID' },
+    {
+      mode: 'ui',
+      description: {
+        ja: 'モデルの表示名・公開順・claude.ai での挙動',
+        en: 'Model names, release order and behavior on claude.ai',
+      },
+    },
+    {
+      mode: 'api',
+      description: {
+        ja: 'モデル ID・命名規則・Bedrock / Google Cloud の ID',
+        en: 'Model IDs, naming rules and Bedrock / Google Cloud IDs',
+      },
+    },
   ];
 
   protected best(mode: QuizMode): number | null {

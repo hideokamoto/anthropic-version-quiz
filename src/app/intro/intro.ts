@@ -14,9 +14,12 @@ interface Faq {
     <section class="lead">
       <p class="eyebrow">このクイズについて</p>
       <h2>Claude のバージョン番号、<br />どこまで追えてる？</h2>
+      <!-- 日本語の文中で改行すると空白として描画されるので、1文ずつ要素を分けて改行する -->
       <p>
-        3, 3.5, 3.5v2, 3.7, 4, 4.1 … まっすぐ進まない「Anthropic数列」を題材にした
-        {{ perGame }} 問の4択クイズです。登録なし・ブラウザだけで遊べます。
+        <span>Claude のバージョン番号はまっすぐ進みません。</span
+        ><span>その「Anthropic数列」を題材に、公式ドキュメントで確かめた事実だけで作った</span
+        ><span>{{ perGame }}問の4択クイズです。</span
+        ><span>登録なし・ブラウザだけで遊べます。</span>
       </p>
       <button type="button" class="primary play" (click)="play.emit()">クイズで遊ぶ</button>
     </section>
@@ -34,17 +37,17 @@ interface Faq {
       ></video>
     </figure>
 
-    <section>
+    <section class="how">
       <h3>遊び方</h3>
       <ol class="steps">
-        <li><b>モードを選ぶ</b>claude.ai モード（表示名・公開順）か API モード（モデル ID）</li>
+        <li><b>モードを選ぶ</b>claude.ai モードと API モードの2種類</li>
         <li><b>4択に答える</b>1プレイ {{ perGame }} 問。出題は毎回ランダム</li>
         <li><b>根拠を確かめる</b>答えるたびに、公式ドキュメントと根拠のページへのリンクが出る</li>
         <li><b>称号をシェア</b>正解数に応じた称号つきで X に投稿できる</li>
       </ol>
     </section>
 
-    <section>
+    <section class="faq-sec">
       <h3>よくある質問</h3>
       <div class="faq">
         @for (f of faqs; track f.q) {
@@ -91,12 +94,6 @@ interface Faq {
     .play {
       margin-top: 0.25rem;
     }
-    /* タブレット・PC ではクイズが隣に見えているので出さない */
-    @media (min-width: 768px) {
-      .play {
-        display: none;
-      }
-    }
     .movie {
       margin: 0;
     }
@@ -142,6 +139,27 @@ interface Faq {
     .links {
       margin: 0;
       font-size: 0.9rem;
+    }
+    /* タブレット・PC: クイズが隣に見えているのでボタンは出さず、縦に長い動画は後ろへ回す */
+    @media (min-width: 768px) {
+      .play {
+        display: none;
+      }
+      .how {
+        order: 1;
+      }
+      .faq-sec {
+        order: 2;
+      }
+      .movie {
+        order: 3;
+      }
+      .links {
+        order: 4;
+      }
+      .movie video {
+        width: 200px;
+      }
     }
   `,
 })

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { QuizMode } from '../data/questions';
 import { SEQUENCE } from '../data/sequence';
 import { QUESTIONS_PER_GAME } from '../quiz/game';
@@ -12,7 +12,6 @@ interface ModeCard {
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
   template: `
     <section class="hero">
       <p class="eyebrow">Anthropic数列カルトクイズ</p>
@@ -23,10 +22,6 @@ interface ModeCard {
         }
         <li class="next" [style.animation-delay.ms]="sequence.length * 90">?</li>
       </ol>
-      <p class="lead">
-        Claude のバージョン番号はまっすぐ進みません。公式ドキュメントで確かめた事実だけで作った
-        {{ perGame }} 問のクイズで、どこまで追えているか試してください。
-      </p>
     </section>
 
     <section class="modes">
@@ -41,8 +36,6 @@ interface ModeCard {
         </button>
       }
     </section>
-
-    <p class="about-link"><a routerLink="/about">数列の中身・クレジット・参考資料</a></p>
   `,
   styles: `
     .hero {
@@ -99,11 +92,6 @@ interface ModeCard {
         opacity: 1;
       }
     }
-    .lead {
-      color: var(--muted);
-      max-width: 36rem;
-      margin: 0 auto;
-    }
     .modes {
       display: grid;
       gap: 0.75rem;
@@ -138,9 +126,6 @@ interface ModeCard {
     .best {
       font-size: 0.8rem;
       color: var(--accent);
-    }
-    .about-link {
-      text-align: center;
     }
   `,
 })

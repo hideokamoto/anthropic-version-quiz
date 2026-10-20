@@ -1,0 +1,103 @@
+<!doctype html>
+<!-- OGP 画像（public/og-image.png）の元。make.mjs が 1200x630 でスクリーンショットする -->
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+      }
+      body {
+        font-family: 'Noto Sans CJK JP', 'Hiragino Sans', sans-serif;
+        background: #1c1b19;
+        color: #ecebe6;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+      }
+      .badge {
+        font:
+          700 26px/1 'Noto Sans CJK JP',
+          sans-serif;
+        letter-spacing: 0.1em;
+        color: #e0835f;
+        border: 2px solid rgba(224, 131, 95, 0.55);
+        border-radius: 999px;
+        padding: 10px 28px;
+      }
+      .chips {
+        display: flex;
+        gap: 8px;
+      }
+      .chips i {
+        font:
+          700 26px/1 ui-monospace,
+          'DejaVu Sans Mono',
+          monospace;
+        font-style: normal;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 2px solid #3a3935;
+        background: #262522;
+      }
+      .chips i.q {
+        background: #e0835f;
+        border-color: #e0835f;
+        color: #1c1b19;
+      }
+      h1 {
+        font:
+          900 84px/1 'Noto Sans CJK JP',
+          sans-serif;
+        letter-spacing: 0.02em;
+      }
+      h1 em {
+        font-style: normal;
+        color: #e0835f;
+      }
+      .foot {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 64px;
+        padding: 0 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #b8532f;
+        color: #fff;
+        font:
+          700 22px/1 'Noto Sans CJK JP',
+          sans-serif;
+      }
+      .foot small {
+        font-weight: 500;
+        font-size: 18px;
+        color: #ffe2d6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="badge">Anthropic数列カルトクイズ</div>
+    <div class="chips">
+      <i>3</i><i>3.5</i><i>3.5v2</i><i>3.7</i><i>4</i><i>4.1</i><i>4.5</i><i>4.6</i><i>4.7</i
+      ><i>4.8</i><i>5</i><i>5.1</i><i>5.5</i><i class="q">?</i>
+    </div>
+    <h1>次の項は、<em>いくつ？</em></h1>
+    <div class="foot">
+      <span>hideokamoto.github.io/anthropic-version-quiz</span><small>非公式ファンメイド</small>
+    </div>
+  </body>
+</html>

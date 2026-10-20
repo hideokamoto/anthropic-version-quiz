@@ -63,6 +63,86 @@ app-root {
 
 main {
   flex: 1;
+  min-width: 0;
+}
+
+/* SP: クイズと紹介をタブで切り替える */
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 -16px;
+  padding: 0 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs button {
+  padding: 0.7rem 0.5rem;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tabs button[aria-selected='true'] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout aside {
+  padding: 1.25rem 0;
+}
+
+.layout[data-tab='app'] aside,
+.layout[data-tab='intro'] main {
+  display: none;
+}
+
+/* タブレット・PC: 左にクイズ、右に紹介を並べる */
+@media (min-width: 768px) {
+  app-root {
+    max-width: 72rem;
+    padding: 0 24px;
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 44rem) minmax(16rem, 22rem);
+    justify-content: center;
+    align-items: start;
+    gap: 2rem;
+  }
+
+  .layout[data-tab] main,
+  .layout[data-tab] aside {
+    display: block;
+  }
+
+  .layout aside {
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 1.25rem 0 1.25rem 2rem;
+    border-left: 1px solid var(--border);
+  }
 }
 
 .site-header {

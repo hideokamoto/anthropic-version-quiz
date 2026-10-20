@@ -2,6 +2,7 @@
 
 # Compiled output
 /dist
+/promo-out
 /tmp
 /out-tsc
 /bazel-out

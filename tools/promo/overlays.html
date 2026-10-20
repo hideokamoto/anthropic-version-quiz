@@ -1,0 +1,372 @@
+<!doctype html>
+<!--
+  プロモ動画に重ねる画像。make.mjs がクエリを変えてスクリーンショットする。
+  kind: short（縦型のテロップ）/ short-end / yt-title / yt-cap / yt-sp / yt-end
+  h: 見出し（[ ] で囲んだ所を強調）、s: 補足、step: 見出しの上のラベル
+-->
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --bg: #1c1b19;
+        --ink: #ecebe6;
+        --sub: #c9c7bf;
+        --accent: #e0835f;
+        --band: #b8532f;
+        --f: 'Noto Sans CJK JP', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+        --mono: ui-monospace, 'DejaVu Sans Mono', Menlo, monospace;
+      }
+      html,
+      body {
+        background: transparent;
+        overflow: hidden;
+        font-family: var(--f);
+        color: var(--ink);
+      }
+      body {
+        position: relative;
+      }
+      em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .step {
+        display: inline-block;
+        padding: 0.25em 0.8em;
+        border-radius: 999px;
+        background: var(--accent);
+        color: var(--bg);
+        font-weight: 900;
+        letter-spacing: 0.12em;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.4em;
+      }
+      .chips i {
+        font: 700 1em/1 var(--mono);
+        font-style: normal;
+        padding: 0.4em 0.6em;
+        border-radius: 999px;
+        border: 2px solid #3a3935;
+        background: #262522;
+      }
+      .chips i.q {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--bg);
+      }
+      .btn {
+        padding: 0.65em 1.4em;
+        border-radius: 999px;
+        background: var(--accent);
+        color: var(--bg);
+        font-weight: 900;
+        letter-spacing: 0.06em;
+      }
+      .note {
+        color: #a8a69e;
+      }
+      [hidden] {
+        display: none !important;
+      }
+
+      /* ---- 縦型 720x1280: 画面部分だけ透明に抜き、外側を影で塗る ---- */
+      .short {
+        width: 720px;
+        height: 1280px;
+      }
+      .short .screen {
+        position: absolute;
+        left: 144px;
+        top: 318px;
+        width: 432px;
+        height: 768px;
+        border-radius: 26px;
+        box-shadow: 0 0 0 3000px var(--bg);
+      }
+      .short .bezel {
+        position: absolute;
+        left: 132px;
+        top: 306px;
+        width: 456px;
+        height: 792px;
+        border-radius: 36px;
+        border: 12px solid #0d0d0c;
+        box-shadow:
+          0 0 0 2px #3a3935,
+          0 24px 60px rgba(0, 0, 0, 0.55);
+      }
+      .short .cap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 48px;
+        height: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 30px;
+      }
+      .short .step {
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+      .short h1 {
+        font: 900 58px/1.22 var(--f);
+      }
+      .short .sub {
+        margin-top: 12px;
+        font: 700 26px/1.5 var(--f);
+        color: var(--sub);
+      }
+      .short .foot {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 132px;
+        background: var(--band);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: #fff;
+      }
+      .short .foot b {
+        font: 900 30px/1 var(--f);
+      }
+      .short .foot span {
+        font: 700 21px/1 var(--f);
+        color: #ffe9df;
+      }
+      .short .foot small {
+        font: 500 15px/1 var(--f);
+        color: #ffd6c6;
+      }
+      .short .card {
+        position: absolute;
+        inset: 0 0 132px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        text-align: center;
+        background: var(--bg);
+      }
+      .short .card .chips {
+        font-size: 26px;
+        max-width: 600px;
+      }
+      .short .card h1 {
+        font-size: 64px;
+      }
+      .short .card .btn {
+        font-size: 34px;
+      }
+      .short .card .url {
+        font: 700 26px/1 var(--f);
+      }
+      .short .card .note {
+        font: 500 20px/1.6 var(--f);
+      }
+
+      /* ---- 横型 1920x1080（YouTube） ---- */
+      .yt {
+        width: 1920px;
+        height: 1080px;
+      }
+      .yt .full {
+        position: absolute;
+        inset: 0;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 44px;
+        text-align: center;
+      }
+      .yt .full .chips {
+        font-size: 40px;
+      }
+      .yt .full .badge {
+        font: 700 36px/1 var(--f);
+        letter-spacing: 0.1em;
+        color: var(--accent);
+        border: 3px solid rgba(224, 131, 95, 0.55);
+        border-radius: 999px;
+        padding: 14px 40px;
+      }
+      .yt .full h1 {
+        font: 900 120px/1.1 var(--f);
+      }
+      .yt .full .sub {
+        font: 700 40px/1.5 var(--f);
+        color: var(--sub);
+      }
+      .yt .full .btn {
+        font-size: 52px;
+      }
+      .yt .full .url {
+        font: 700 44px/1 var(--f);
+      }
+      .yt .full .note {
+        font: 500 30px/1.6 var(--f);
+      }
+      /* 下部のテロップ帯 */
+      .yt .lower {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 34px 80px 40px;
+        background: linear-gradient(to top, rgba(28, 27, 25, 0.96) 70%, rgba(28, 27, 25, 0));
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+      .yt .lower .step {
+        font-size: 30px;
+        flex: none;
+      }
+      .yt .lower h1 {
+        font: 900 56px/1.25 var(--f);
+      }
+      .yt .lower .sub {
+        margin-top: 6px;
+        font: 700 32px/1.4 var(--f);
+        color: var(--sub);
+      }
+      /* アプリのヘッダーに重ならないよう、テロップ帯の右端に置く */
+      .yt .tag {
+        margin-left: auto;
+        flex: none;
+        align-self: flex-end;
+        color: #a8a69e;
+        font: 700 24px/1 var(--f);
+      }
+      /* スマホの画面を右に置く場面 */
+      .yt .sp-screen {
+        position: absolute;
+        left: 1160px;
+        top: 96px;
+        width: 500px;
+        height: 888px;
+        border-radius: 30px;
+        box-shadow: 0 0 0 4000px var(--bg);
+      }
+      .yt .sp-bezel {
+        position: absolute;
+        left: 1146px;
+        top: 82px;
+        width: 528px;
+        height: 916px;
+        border-radius: 42px;
+        border: 14px solid #0d0d0c;
+        box-shadow:
+          0 0 0 2px #3a3935,
+          0 30px 80px rgba(0, 0, 0, 0.55);
+      }
+      .yt .sp-text {
+        position: absolute;
+        left: 140px;
+        top: 0;
+        bottom: 0;
+        width: 900px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 28px;
+      }
+      .yt .sp-text .step {
+        align-self: flex-start;
+        font-size: 30px;
+      }
+      .yt .sp-text h1 {
+        font: 900 84px/1.25 var(--f);
+      }
+      .yt .sp-text .sub {
+        font: 700 38px/1.6 var(--f);
+        color: var(--sub);
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const p = new URLSearchParams(location.search);
+      const kind = p.get('kind');
+      const mark = (t) =>
+        (t ?? '')
+          .replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c])
+          .replace(/\[(.+?)\]/g, '<em>$1</em>')
+          .replace(/\|/g, '<br />');
+      const step = p.get('step') ? `<span class="step">${mark(p.get('step'))}</span>` : '';
+      const h = mark(p.get('h'));
+      const s = mark(p.get('s'));
+      const URL_TEXT = 'hideokamoto.github.io/anthropic-version-quiz';
+      const NOTE = '非公式のファンメイドクイズです。Anthropic とは関係ありません';
+      const chips =
+        '<div class="chips">' +
+        '3 3.5 3.5v2 3.7 4 4.1 4.5 4.6 4.7 4.8 5 5.1 5.5'
+          .split(' ')
+          .map((t) => `<i>${t}</i>`)
+          .join('') +
+        '<i class="q">?</i></div>';
+      const end = `
+        ${chips}
+        <h1>次の項は、<br /><em>いくつ？</em></h1>
+        <div class="btn">ブラウザで無料プレイ</div>
+        <div class="url">${URL_TEXT}</div>
+        <div class="note">登録・インストール不要 ／ 全問、公式ドキュメントで確認済み</div>`;
+      const shortFoot = `<div class="foot"><b>Anthropic数列クイズ</b><span>${URL_TEXT}</span><small>${NOTE}</small></div>`;
+
+      const views = {
+        short: () => `
+          <div class="short">
+            <div class="screen"></div><div class="bezel"></div>
+            <div class="cap">${step}<h1>${h}</h1><p class="sub">${s}</p></div>
+            ${shortFoot}
+          </div>`,
+        'short-end': () => `<div class="short"><div class="card">${end}</div>${shortFoot}</div>`,
+        'yt-title': () => `
+          <div class="yt"><div class="full">
+            <div class="badge">Anthropic数列カルトクイズ</div>
+            ${chips}
+            <h1>次の項は、<em>いくつ？</em></h1>
+            <p class="sub">Claude のバージョン番号をどこまで追えているか試す4択クイズ</p>
+            <p class="note">${NOTE}</p>
+          </div></div>`,
+        'yt-cap': () => `
+          <div class="yt">
+            <div class="lower">
+              ${step}<div><h1>${h}</h1>${s ? `<p class="sub">${s}</p>` : ''}</div>
+              <span class="tag">非公式ファンメイド</span>
+            </div>
+          </div>`,
+        'yt-sp': () => `
+          <div class="yt">
+            <div class="sp-screen"></div><div class="sp-bezel"></div>
+            <div class="sp-text">${step}<h1>${h}</h1><p class="sub">${s}</p></div>
+          </div>`,
+        'yt-end': () => `<div class="yt"><div class="full">${end}</div></div>`,
+      };
+      document.body.innerHTML = views[kind]();
+      if (kind === 'short-end' || kind === 'yt-title' || kind === 'yt-end') {
+        document.body.style.background = '#1c1b19';
+      }
+    </script>
+  </body>
+</html>

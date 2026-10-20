@@ -7,6 +7,10 @@
 
 各モード26問のプールから、1プレイごとにランダムで5問を出題します。解答後には、そのバージョンの公式ドキュメントと、正解の根拠にしたページへのリンクを表示します。
 
+日本語と英語に対応しています。最初の表示言語は、URL の `?lang=ja` / `?lang=en`、前回ヘッダーで選んだ言語、ブラウザの言語設定の順で決まります。
+
+> **English:** An unofficial, browser-only quiz on Claude's version numbers (the “Anthropic Sequence”). The app is available in Japanese and English — use the language button in the header, or open it with `?lang=en`.
+
 ## クレジット
 
 - アイディア元：[@_watany](https://x.com/_watany) さんの[「Anthropic数列」の投稿](https://x.com/_watany/status/2102653393500299316)
@@ -34,6 +38,8 @@ npm run build:pages       # GitHub Pages 向けの本番ビルド（ライブラ
 - 数列の年表：`src/app/data/sequence.ts`
 
 問題を追加するときは、`docs`（そのバージョンの公式ドキュメント）と `sources`（正解の根拠）に、公式ページへのリンクを必ず入れてください。テストでチェックしています。
+
+画面に出る文言は `{ ja: '…', en: '…' }` の形で日本語と英語の両方を書きます（`src/app/i18n/i18n.ts` の `Text` 型）。モデル ID のように言語で変わらないものだけ、ただの文字列で書けます。日本語を含む文字列を英訳なしで書くとテストが落ちます。
 
 ## 紹介動画・OGP 画像の再生成
 

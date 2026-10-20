@@ -51,8 +51,12 @@ describe('game', () => {
   });
 
   it('rankFor gives the top title only for a perfect score', () => {
-    expect(rankFor(5, 5)).toBe('Anthropic数列の番人');
-    expect(rankFor(4, 5)).not.toBe('Anthropic数列の番人');
-    expect(rankFor(0, 5)).toBe('Claude 3 で時が止まっている人');
+    const top = rankFor(5, 5);
+    expect(top).toEqual({ ja: 'Anthropic数列の番人', en: 'Keeper of the Anthropic Sequence' });
+    expect(rankFor(4, 5)).not.toEqual(top);
+    expect(rankFor(0, 5)).toEqual({
+      ja: 'Claude 3 で時が止まっている人',
+      en: 'Still stuck at Claude 3',
+    });
   });
 });

@@ -2,24 +2,44 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
+import { I18n } from './i18n/i18n';
+import { APP_NAME } from './i18n/title';
 import { Intro } from './intro/intro';
 
 type Tab = 'app' | 'intro';
+
+const M = {
+  credits: { ja: 'クレジット', en: 'Credits' },
+  licenses: { ja: 'ライセンス', en: 'Licenses' },
+  tabs: { ja: '表示の切り替え', en: 'Switch view' },
+  quiz: { ja: 'クイズ', en: 'Quiz' },
+  about: { ja: 'このクイズについて', en: 'About this quiz' },
+  footer: {
+    ja: '非公式のファンメイドクイズです。Anthropic とは関係ありません。',
+    en: 'An unofficial fan-made quiz. Not affiliated with Anthropic.',
+  },
+} as const;
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink, Intro],
   template: `
     <header class="site-header">
-      <a routerLink="/" class="brand">Anthropic数列クイズ</a>
+      <a routerLink="/" class="brand">{{ i18n.t(appName) }}</a>
       <nav>
-        <a routerLink="/about">クレジット</a>
-        <a routerLink="/licenses">ライセンス</a>
+        <a routerLink="/about">{{ i18n.t(m.credits) }}</a>
+        <a routerLink="/licenses">{{ i18n.t(m.licenses) }}</a>
+        <!-- 切り替え先の言語名を、その言語で書く -->
+        @if (i18n.lang() === 'ja') {
+          <button type="button" class="lang" lang="en" (click)="i18n.set('en')">English</button>
+        } @else {
+          <button type="button" class="lang" lang="ja" (click)="i18n.set('ja')">日本語</button>
+        }
       </nav>
     </header>
 
     @if (!wide()) {
-      <div class="tabs" role="tablist" aria-label="表示の切り替え">
+      <div class="tabs" role="tablist" [attr.aria-label]="i18n.t(m.tabs)">
         <button
           type="button"
           role="tab"
@@ -28,7 +48,7 @@ type Tab = 'app' | 'intro';
           [attr.aria-selected]="tab() === 'app'"
           (click)="tab.set('app')"
         >
-          クイズ
+          {{ i18n.t(m.quiz) }}
         </button>
         <button
           type="button"
@@ -38,7 +58,7 @@ type Tab = 'app' | 'intro';
           [attr.aria-selected]="tab() === 'intro'"
           (click)="tab.set('intro')"
         >
-          このクイズについて
+          {{ i18n.t(m.about) }}
         </button>
       </div>
     }
@@ -56,18 +76,21 @@ type Tab = 'app' | 'intro';
         id="panel-intro"
         [attr.role]="wide() ? null : 'tabpanel'"
         [attr.aria-labelledby]="wide() ? null : 'tab-intro'"
-        [attr.aria-label]="wide() ? 'このクイズについて' : null"
+        [attr.aria-label]="wide() ? i18n.t(m.about) : null"
       >
         <app-intro (play)="tab.set('app')" />
       </aside>
     </div>
 
     <footer class="site-footer">
-      非公式のファンメイドクイズです。Anthropic とは関係ありません。
+      {{ i18n.t(m.footer) }}
     </footer>
   `,
 })
 export class App {
+  protected readonly i18n = inject(I18n);
+  protected readonly m = M;
+  protected readonly appName = APP_NAME;
   /** SP でどちらを出すか。タブレット・PC では両方を並べるので使わない */
   protected readonly tab = signal<Tab>('app');
   /** styles.css の 2 カラムに切り替わる幅と揃える */

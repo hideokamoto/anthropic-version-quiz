@@ -1,6 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CREDIT_LINKS, LICENSE_LINKS } from '../data/links';
+import { I18n } from '../i18n/i18n';
 import {
   parseThirdPartyLicenses,
   THIRD_PARTY_LICENSES_FILE,
@@ -9,58 +10,86 @@ import {
 
 type LoadState = 'loading' | 'loaded' | 'unavailable';
 
+const M = {
+  top: { ja: '← トップへ', en: '← Back to top' },
+  loading: { ja: '読み込み中…', en: 'Loading…' },
+  unavailable: {
+    ja: 'ライセンス一覧を読み込めませんでした。開発サーバー（ng serve）ではこのファイルが作られません。本番ビルドでは表示されます。',
+    en: 'Could not load the license list. The development server (ng serve) does not create this file; it is shown in production builds.',
+  },
+  package: { ja: 'パッケージ', en: 'Package' },
+  license: { ja: 'ライセンス', en: 'License' },
+  fullText: { ja: 'ライセンス全文', en: 'Full license texts' },
+} as const;
+
 @Component({
   selector: 'app-licenses',
   imports: [RouterLink],
   template: `
-    <p><a routerLink="/">← トップへ</a></p>
-
-    <h2>このアプリのライセンス</h2>
     <p>
-      このアプリのソースコードは
-      <strong>GNU General Public License v3.0（GPL-3.0）</strong>で公開しています。
+      <a routerLink="/">{{ i18n.t(m.top) }}</a>
     </p>
+
+    @if (i18n.lang() === 'ja') {
+      <h2>このアプリのライセンス</h2>
+      <p>
+        このアプリのソースコードは
+        <strong>GNU General Public License v3.0（GPL-3.0）</strong>で公開しています。
+      </p>
+    } @else {
+      <h2>License of this app</h2>
+      <p>
+        The source code of this app is released under the
+        <strong>GNU General Public License v3.0 (GPL-3.0)</strong>.
+      </p>
+    }
     <ul>
       <li>
         <a [href]="links.appLicense.url" target="_blank" rel="noopener noreferrer">{{
-          links.appLicense.label
+          i18n.t(links.appLicense.label)
         }}</a>
       </li>
       <li>
         <a [href]="links.gpl3.url" target="_blank" rel="noopener noreferrer">{{
-          links.gpl3.label
+          i18n.t(links.gpl3.label)
         }}</a>
       </li>
       <li>
-        <a [href]="repo.url" target="_blank" rel="noopener noreferrer">{{ repo.label }}</a>
+        <a [href]="repo.url" target="_blank" rel="noopener noreferrer">{{ i18n.t(repo.label) }}</a>
       </li>
     </ul>
 
-    <h2>利用しているライブラリのライセンス</h2>
-    <p>
-      公開しているアプリに同梱しているライブラリです。一覧と全文は、ビルド時に Angular CLI
-      が出力する
-      <a [href]="file" target="_blank" rel="noopener">{{ file }}</a>
-      から読み込んでいます。
-    </p>
+    @if (i18n.lang() === 'ja') {
+      <h2>利用しているライブラリのライセンス</h2>
+      <p>
+        公開しているアプリに同梱しているライブラリです。一覧と全文は、ビルド時に Angular CLI
+        が出力する
+        <a [href]="file" target="_blank" rel="noopener">{{ file }}</a>
+        から読み込んでいます。
+      </p>
+    } @else {
+      <h2>Licenses of bundled libraries</h2>
+      <p>
+        These are the libraries bundled into the published app. The list and full texts are loaded
+        from <a [href]="file" target="_blank" rel="noopener">{{ file }}</a
+        >, which the Angular CLI writes at build time.
+      </p>
+    }
 
     @switch (state()) {
       @case ('loading') {
-        <p class="note">読み込み中…</p>
+        <p class="note">{{ i18n.t(m.loading) }}</p>
       }
       @case ('unavailable') {
-        <p class="note">
-          ライセンス一覧を読み込めませんでした。開発サーバー（ng
-          serve）ではこのファイルが作られません。本番ビルドでは表示されます。
-        </p>
+        <p class="note">{{ i18n.t(m.unavailable) }}</p>
       }
       @case ('loaded') {
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>パッケージ</th>
-                <th>ライセンス</th>
+                <th>{{ i18n.t(m.package) }}</th>
+                <th>{{ i18n.t(m.license) }}</th>
               </tr>
             </thead>
             <tbody>
@@ -81,10 +110,10 @@ type LoadState = 'loading' | 'loaded' | 'unavailable';
           </table>
         </div>
 
-        <h3>ライセンス全文</h3>
+        <h3>{{ i18n.t(m.fullText) }}</h3>
         @for (pkg of packages(); track pkg.name) {
           <details>
-            <summary>{{ pkg.name }}（{{ pkg.license }}）</summary>
+            <summary>{{ pkg.name }} ({{ pkg.license }})</summary>
             <pre>{{ pkg.text }}</pre>
           </details>
         }
@@ -140,6 +169,8 @@ type LoadState = 'loading' | 'loaded' | 'unavailable';
   `,
 })
 export class LicensesPage implements OnInit {
+  protected readonly i18n = inject(I18n);
+  protected readonly m = M;
   protected readonly links = LICENSE_LINKS;
   protected readonly repo = CREDIT_LINKS.repo;
   protected readonly file = THIRD_PARTY_LICENSES_FILE;

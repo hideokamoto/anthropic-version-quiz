@@ -147,6 +147,8 @@ main {
 
 .site-header {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
   justify-content: space-between;
   align-items: center;
   padding: 0.9rem 0;
@@ -156,7 +158,18 @@ main {
 
 .site-header nav {
   display: flex;
+  align-items: center;
   gap: 1rem;
+}
+
+.site-header .lang {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
 }
 
 .site-header .brand {

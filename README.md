@@ -5,7 +5,7 @@
 - **claude.ai モード**：モデルの表示名・公開順・claude.ai での挙動
 - **API モード**：モデル ID・命名規則・Amazon Bedrock / Google Cloud の ID
 
-各モード25問のプールから、1プレイごとにランダムで5問を出題します。解答後には、そのバージョンの公式ドキュメントと、正解の根拠にしたページへのリンクを表示します。
+各モード26問のプールから、1プレイごとにランダムで5問を出題します。解答後には、そのバージョンの公式ドキュメントと、正解の根拠にしたページへのリンクを表示します。
 
 ## クレジット
 
@@ -34,6 +34,20 @@ npm run build:pages       # GitHub Pages 向けの本番ビルド（ライブラ
 - 数列の年表：`src/app/data/sequence.ts`
 
 問題を追加するときは、`docs`（そのバージョンの公式ドキュメント）と `sources`（正解の根拠）に、公式ページへのリンクを必ず入れてください。テストでチェックしています。
+
+## 紹介動画・OGP 画像の再生成
+
+紹介欄の縦型動画（`public/lp/promo.mp4` とポスター画像）、OGP 画像（`public/og-image.png`）、YouTube 用の紹介動画（`promo-out/youtube.mp4` とサムネイル。git 管理外）は、`tools/promo/make.mjs` が Playwright でアプリを操作して撮影し、ffmpeg で合成します。ffmpeg が必要です。
+
+```bash
+npx ng build                    # base-href は既定の / のまま
+npx playwright-core install chromium   # 初回のみ（ブラウザを別途用意している環境では不要）
+node tools/promo/make.mjs       # 別途用意したブラウザを使うときは PW_CHROMIUM_PATH=/path/to/chromium を付ける
+```
+
+- `Math.random` を固定シードに差し替えるので、出題・選択肢の並びは毎回同じになります。テロップは「2問目が 4.1/4.7/4.8 を名乗ったモデルの問題」という前提で書いているため、その出題になるシードを探してから撮影します。
+- 撮影中の問題が下調べと違ったり、結果の称号が想定と違ったりしたときは、テロップと食い違わないように止まります。
+- テロップや締めの画面は `tools/promo/overlays.html`、OGP 画像は `tools/promo/og-image.html` で編集します。
 
 ## デプロイ
 
